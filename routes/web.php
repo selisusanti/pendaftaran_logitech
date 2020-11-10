@@ -13,4 +13,9 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+}); 
+
+
+Route::get('register', 'LogikaController@registerForm');
+Route::post('/registerform', 'LogikaController@daftarForm')->name('register-form');
+

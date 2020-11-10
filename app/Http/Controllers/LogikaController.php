@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Validator;
+use DB;
+use App\UsersRegister;
 
 class LogikaController extends Controller
 {
@@ -96,6 +99,56 @@ class LogikaController extends Controller
         {
             echo $array[$i]." "; 
         } 
+
+    }
+
+
+
+    //register form 
+    public function registerForm()
+    {
+        return view('page/dashboard/index');
+
+    }
+
+     //register form 
+    public function daftarForm(Request $request)
+    {
+        \Validator::make($request->all(), [
+            'firstName' => 'required|string|max:255', 
+            'lastName' => 'string|max:255', 
+            'tehnical_email' => 'required|email|max:255', 
+            'password' => 'required|string|min:8|max:8', 
+            'hobi' => 'required', 
+            
+        ])->validate();
+
+        \DB::beginTransaction();
+        try{
+            $store                = new UsersRegister;
+            $store->firstname     = $request->firstName;
+            $store->lastname      = $request->lastName; 
+            $store->email         = $request->tehnical_email; 
+            $store->password      = $request->password; 
+            $store->hobi          = json_encode($request['hobi']); 
+            $store->address       = 'main game'; 
+            $store->birthdate     = date(now()); 
+            $store->membership_type  ='1'; 
+            $store->fee_vat          = date(now()); 
+            $store->cc_number        = date(now()); 
+            $store->cc_type          = date(now()); 
+            $store->cc_expireddate   = date(now()); 
+            $store->save();
+            
+            \DB::commit();
+            return \Redirect::to("/register")->with('success', 'Data Register Berhasil Ditambahkan');
+        
+          
+        } catch(\Error $e){
+            return \Redirect::to("/register")->with('error', 'Data Register Gagal Ditambahkan');
+        }    
+       
+
 
     }
 
