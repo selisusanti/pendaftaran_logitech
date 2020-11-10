@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Validator;
 use DB;
 use App\UsersRegister;
+use GuzzleHttp\Client;
+
 
 class LogikaController extends Controller
 {
@@ -107,7 +109,19 @@ class LogikaController extends Controller
     //register form 
     public function registerForm()
     {
-        return view('page/dashboard/index');
+        //access api client to get provinces;
+        $client     = new Client();
+        $request2   = $client->get('https://api.rajaongkir.com/starter/city', [
+                        \GuzzleHttp\RequestOptions::HEADERS      => array(
+                            'key'        => '0df6d5bf733214af6c6644eb8717c92c',
+                            'Content-Type' => 'application/json',
+                        )
+        ]);
+        
+        $data = $request2->getBody()->getContents();
+        // return json_encode($response->rajaongkir);
+
+        return view('page/dashboard/index' , compact('data'));
 
     }
 
@@ -120,6 +134,12 @@ class LogikaController extends Controller
             'tehnical_email' => 'required|email|max:255', 
             'password' => 'required|string|min:8|max:8', 
             'hobi' => 'required', 
+            'birth_date' => 'required', 
+            'cc_expired' => 'required', 
+            'cc_type' => 'required', 
+            'ccNumber' => 'required', 
+            'fee_vat' => 'required', 
+            'membership_type' => 'required',
             
         ])->validate();
 
@@ -129,15 +149,15 @@ class LogikaController extends Controller
             $store->firstname     = $request->firstName;
             $store->lastname      = $request->lastName; 
             $store->email         = $request->tehnical_email; 
-            $store->password      = $request->password; 
+            $store->password      = bcrypt($request->password); 
             $store->hobi          = json_encode($request['hobi']); 
-            $store->address       = 'main game'; 
-            $store->birthdate     = date(now()); 
-            $store->membership_type  ='1'; 
-            $store->fee_vat          = date(now()); 
-            $store->cc_number        = date(now()); 
-            $store->cc_type          = date(now()); 
-            $store->cc_expireddate   = date(now()); 
+            $store->address       = $request->alamat;  
+            $store->birthdate     = $request->birth_date; 
+            $store->membership_type  = $request->membership_type ; 
+            $store->fee_vat          = $request->fee_vat ; 
+            $store->cc_number        = $request->ccNumber ;
+            $store->cc_type          = $request->cc_type; 
+            $store->cc_expireddate   = $request->cc_expired;  
             $store->save();
             
             \DB::commit();
