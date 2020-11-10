@@ -19,3 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::get('bilanganPrima', 'LogikaController@bilanganPrima');
+Route::post('bilanganArray', 'LogikaController@bilanganArray');
+Route::get('loopNilai', 'LogikaController@loopNilai');
+Route::post('sortingValue', 'LogikaController@sortingValue');
