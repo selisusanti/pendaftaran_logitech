@@ -72,8 +72,9 @@ class LogikaController extends Controller
         for($i=1;$i<=$request->nilai;$i++)
         {
             for($k=1;$k<=$i;$k++){
-                print $k."<br>";
+                print $k." ";
             }
+            print "\n";
         }
     }
 
